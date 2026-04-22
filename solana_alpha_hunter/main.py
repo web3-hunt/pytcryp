@@ -143,6 +143,10 @@ tabs = st.tabs(
 with tabs[2]:
     st.subheader("Live Feed (Helius Websocket)")
     secrets = Secrets()
+    st.caption(
+        f"Env check: HELIUS_API_KEY {'detected' if bool(secrets.helius_api_key) else 'missing'} "
+        f"(len={len(secrets.helius_api_key)})"
+    )
     if not secrets.helius_api_key:
         st.warning("Set `HELIUS_API_KEY` in Railway variables to enable Live Feed.")
     c1, c2, c3 = st.columns([1, 1, 2])
