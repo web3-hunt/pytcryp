@@ -66,6 +66,30 @@ streamlit run main.py --server.port 8080 --server.headless true
 
 4. Click **Deploy** in Replit to publish.
 
+## 4.1) Railway Deployment (recommended for Streamlit app)
+
+1. Create a new Railway project and connect your GitHub repo.
+2. In service settings, set **Root Directory** to:
+   - `solana_alpha_hunter`
+3. Confirm Railway detects:
+   - `railway.json`
+   - `nixpacks.toml`
+   - `runtime.txt`
+4. Add Variables:
+   - `HELIUS_API_KEY`
+   - `TELEGRAM_BOT_TOKEN` (optional)
+   - `TELEGRAM_CHAT_ID` (optional)
+   - `TEST_MODE=false`
+5. Deploy.
+
+### If build fails again
+
+- Open Railway service → **Deployments** → failed deployment → **View Logs**.
+- Check:
+  - **Build Logs**: package install / Python version errors.
+  - **Runtime Logs**: app start command / Streamlit startup errors.
+- Most common fix: wrong Root Directory (must be `solana_alpha_hunter`).
+
 ## 5) Validation Checklist
 
 Run from `solana_alpha_hunter/`:
@@ -91,3 +115,6 @@ python -c "import main; print('OK')"
 - SQLite runs in WAL mode automatically.
 - Scheduler start is guarded by `st.session_state["scheduler_started"]`.
 - If native ML wheels fail on a platform, use Python 3.12 and re-install.
+- Railway dashboard links:
+  - Service logs: Railway project → service → Deployments → latest deployment
+  - Live app URL: Railway project → service → Settings / Domains

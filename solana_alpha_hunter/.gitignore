@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+alpha_hunter.db
+reports/*.md
+tla_reports/*.json
