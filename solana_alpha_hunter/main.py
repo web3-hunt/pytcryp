@@ -69,7 +69,8 @@ def _simplify_helius_event(evt: dict) -> dict:
 
 def _live_feed_worker(stop_event: threading.Event):
     secrets = Secrets()
-    adapter = HeliusAdapter(secrets)
+    api_key = st.session_state.get("live_feed_api_key") or secrets.helius_api_key
+    adapter = HeliusAdapter(api_key)
     st.session_state.live_feed_status = "connecting"
 
     async def _run():
@@ -143,18 +144,26 @@ tabs = st.tabs(
 with tabs[2]:
     st.subheader("Live Feed (Helius Websocket)")
     secrets = Secrets()
+    st.text_input(
+        "Helius API Key (session-only override)",
+        key="live_feed_api_key",
+        type="password",
+        placeholder="Paste key here if env var isn't detected…",
+    )
+    effective_key = st.session_state.get("live_feed_api_key") or secrets.helius_api_key
     st.caption(
         f"Env check: HELIUS_API_KEY {'detected' if bool(secrets.helius_api_key) else 'missing'} "
         f"(len={len(secrets.helius_api_key)})"
     )
-    if not secrets.helius_api_key:
-        st.warning("Set `HELIUS_API_KEY` in Railway variables to enable Live Feed.")
+    st.caption(f"Effective key: {'set' if bool(effective_key) else 'missing'}")
+    if not effective_key:
+        st.warning("Add `HELIUS_API_KEY` in Railway variables or paste a session-only key above.")
     c1, c2, c3 = st.columns([1, 1, 2])
     c1.metric("Status", st.session_state.live_feed_status)
     c2.metric("Events (buffer)", len(st.session_state.live_feed_events))
     with c3:
         col_start, col_stop, col_clear = st.columns(3)
-        if col_start.button("Start", disabled=not bool(secrets.helius_api_key) or st.session_state.live_feed_running):
+        if col_start.button("Start", disabled=not bool(effective_key) or st.session_state.live_feed_running):
             _start_live_feed()
             time.sleep(0.2)
             st.rerun()
