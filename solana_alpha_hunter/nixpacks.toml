@@ -10,9 +10,10 @@ nixPkgs = [
 [phases.install]
 cmds = [
   "python --version",
-  "pip --version",
-  "pip install -r requirements.txt"
+  "python -m venv /app/.venv",
+  "/app/.venv/bin/python -m pip install --upgrade pip setuptools wheel",
+  "/app/.venv/bin/pip install -r requirements.txt"
 ]
 
 [start]
-cmd = "streamlit run main.py --server.port $PORT --server.address 0.0.0.0 --server.headless true"
+cmd = "/app/.venv/bin/streamlit run main.py --server.port $PORT --server.address 0.0.0.0 --server.headless true"
